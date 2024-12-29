@@ -1,38 +1,21 @@
-# sv
+# 🌥️ Cloudsapphire Neo
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+![GitHub](https://img.shields.io/github/license/prakit1234/cloudsapphire-neo) ![GitHub issues](https://img.shields.io/github/issues/prakit1234/cloudsapphire-neo) ![GitHub stars](https://img.shields.io/github/stars/prakit1234/cloudsapphire-neo?style=social)
 
-## Creating a project
+## Overview
+Cloudsapphire Neo is a **private**, free cloud file storage and sharing site designed for personal use. It allows users to securely upload, store, and share files without any cost. The platform ensures that your files remain private and accessible only to you.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
+- 🔒 **Private Storage**: Store your files securely, accessible only by you.
+- 👤 **User  Authentication**: Sign up and log in to manage your files securely.
+- 📤 **File Uploads**: Easily upload files through a user-friendly interface.
+- 🔗 **File Sharing**: Generate temporary links to share files with others securely.
 
-```bash
-# create a new project in the current directory
-npx sv create
+## Important Note
+This project is **private** and is intended for personal use only. **Do not clone or fork this repository.** Any unauthorized use or distribution of this project is prohibited.
 
-# create a new project in my-app
-npx sv create my-app
-```
+## License
+This project is private and not open for public use. Any unauthorized distribution or modification is prohibited.
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Contact
+For any questions or feedback, please reach out to [your-email@example.com](mailto:prakitchetia@gmail.com).
