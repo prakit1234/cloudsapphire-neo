@@ -1,229 +1,221 @@
 <script lang="ts">
-  import { writable } from "svelte/store";
-  import { getAuth } from "firebase/auth";
-  import { supabase } from "$lib/supabase.js";
+  import { supabase } from '$lib/supabase';
+  import { writable } from 'svelte/store';
 
-  const auth = getAuth();
-
-  // State management
   let file: File | null = null;
   const uploadProgress = writable(0);
-  const uploadComplete = writable(false);
-  const errorMessage = writable("");
-  const downloadLink = writable("");
-
-  // Max file size (500MB)
-  const MAX_FILE_SIZE = 500 * 1024 * 1024;
+  const downloadLink = writable('');
+  const errorMessage = writable('');
 
   const handleFileUpload = async () => {
-    errorMessage.set("");
-    uploadComplete.set(false);
+    errorMessage.set('');
+    uploadProgress.set(0);
 
     if (!file) {
-      errorMessage.set("Please select a file to upload.");
-      return;
-    }
-
-    // Check file size
-    if (file.size > MAX_FILE_SIZE) {
-      errorMessage.set("File size exceeds 500 MB. Please choose a smaller file.");
+      errorMessage.set('Please select a file to upload.');
       return;
     }
 
     try {
-      // Get authenticated user
-      const user = auth.currentUser;
-      if (!user) {
-        errorMessage.set("You need to be logged in to upload files.");
+      // Define the file path
+      const filePath = `uploads/${Date.now()}_${file.name}`;
+
+      // Upload the file to Supabase
+      const { data, error } = await supabase.storage
+        .from('uploads')
+        .upload(filePath, file);
+
+      if (error) {
+        console.error('Upload Error:', error);
+        errorMessage.set(`Failed to upload file: ${error.message}`);
         return;
       }
 
-      const userId = user.uid;
-
-      // Define file path
-      const filePath = `public/${userId}/${Date.now()}_${file.name}`;
-
-      // Upload the file to Supabase Storage in the 'uploads' bucket
-      const { data: uploadData, error: uploadFileError } = await supabase.storage
-        .from("uploads") // Ensure the bucket name is 'uploads'
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
-
-      if (uploadFileError) {
-        errorMessage.set("Failed to upload file. Please try again.");
-        console.error("Upload Error:", uploadFileError);
-        return;
-      }
-
-      // Get the public URL of the uploaded file
+      // Generate a public URL for the uploaded file
       const { data: publicUrlData, error: publicUrlError } = supabase.storage
-        .from("uploads")
+        .from('uploads')
         .getPublicUrl(filePath);
 
       if (publicUrlError) {
-        errorMessage.set("Failed to generate a public download link.");
-        console.error("Public URL Error:", publicUrlError);
+        console.error('Public URL Error:', publicUrlError);
+        errorMessage.set(`Failed to generate public URL: ${publicUrlError.message}`);
         return;
       }
 
-      const publicUrl = publicUrlData.publicUrl;
-
-      if (!publicUrl) {
-        errorMessage.set("Failed to retrieve the public URL.");
-        return;
-      }
-
-      // Save metadata to the database
-      const metadata = {
-        user_id: userId,
-        file_name: file.name,
-        file_url: publicUrl,
-        created_at: new Date().toISOString(),
-        is_public: true // Indicate the file is public
-      };
-
-      const { error: dbError } = await supabase.from("uploads").insert([metadata]);
-
-      if (dbError) {
-        errorMessage.set("Failed to save file information.");
-        console.error("Database Error:", dbError);
-        return;
-      }
-
-      // Update UI with success state
-      downloadLink.set(publicUrl);
+      // Update the download link
+      downloadLink.set(publicUrlData.publicUrl);
       uploadProgress.set(100);
-      uploadComplete.set(true);
-      errorMessage.set("");
     } catch (err) {
-      console.error("Unexpected Error:", err);
-      errorMessage.set("An unexpected error occurred. Please try again.");
+      console.error('Unexpected Error:', err);
+      errorMessage.set('An unexpected error occurred.');
     }
   };
 </script>
 
 <style>
-  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap');
 
   :global(body) {
-    font-family: "Poppins", "Inter", sans-serif;
-    background-color: #101010;
-    color: #ffffff;
     margin: 0;
-    padding: 0;
-  }
-
-  .upload-container {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #fff;
+    height: 100vh;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
+  }
+
+  .fullscreen-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     height: 100vh;
     padding: 2rem;
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+  }
+
+   .logo {
+    width: 150px;
+    height: auto;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+
+  label {
+    display: inline-block;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    border: none;
+    color: #fff;
+    padding: 0.8rem 1.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  label:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #2575fc, #6a11cb);
+  }
+
+  .selected-file {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #d3d3d3;
+    font-family: 'Inter', sans-serif;
     text-align: center;
   }
 
-  .upload-box {
-    background: #181818;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
-    max-width: 500px;
-    width: 100%;
+  button {
+    margin-top: 1.5rem;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    border: none;
+    color: #fff;
+    padding: 0.8rem 1.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
   }
 
-  .progress-bar-container {
-    width: 100%;
-    background: #333;
-    border-radius: 8px;
-    margin: 1rem 0;
+  button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #2575fc, #6a11cb);
   }
 
   .progress-bar {
-    height: 20px;
-    background: #00aaff;
-    border-radius: 8px;
-    width: 0%;
-    transition: width 0.4s ease;
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
   }
 
-  .button {
-    margin-top: 1rem;
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 8px;
-    background-color: #00aaff;
-    color: #ffffff;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
-  }
-
-  .button:hover {
-    background-color: #0088cc;
+  .progress {
+    height: 100%;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    transition: width 0.3s;
   }
 
   .error-message {
-    color: #ff4c4c;
-    font-size: 1.2rem;
+    color: #ff4d4d;
     margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
   }
 
-  .link {
-    color: #00ffaa;
+  .success-message {
+    color: #4caf50;
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  a.download-link {
+    display: inline-block;
+    margin-top: 1.5rem;
     text-decoration: none;
-    font-weight: bold;
+    background: linear-gradient(90deg, #2575fc, #6a11cb);
+    color: #fff;
+    padding: 0.8rem 1.6rem;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: background 0.3s;
   }
 
-  .link:hover {
-    text-decoration: underline;
-  }
-
-  .title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    font-weight: bold;
-  }
-
-  .subtitle {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: #bbbbbb;
+  a.download-link:hover {
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
   }
 </style>
 
-<div class="upload-container">
-  <img src="/static/logo.png" alt="Logo" style="max-width: 200px; margin-bottom: 20px;" />
-  <div class="upload-box">
-    <h1 class="title">Upload Your File</h1>
-    <p class="subtitle">Upload files up to 500 MB and get a shareable link.</p>
-    <input
-      type="file"
-      on:change={(e) => {
-        const target = e.target as HTMLInputElement;
-        file = target.files ? target.files[0] : null;
-      }}
-    />
-    <button class="button" on:click={handleFileUpload}>
-      Upload File
-    </button>
-    {#if $errorMessage}
-      <p class="error-message">{$errorMessage}</p>
-    {/if}
-    <div class="progress-bar-container">
-      <div
-        class="progress-bar"
-        style="width: {$uploadProgress}%"
-      ></div>
-    </div>
-    {#if $uploadComplete}
-      <p>
-        Upload complete! Your file link: 
-        <a href={$downloadLink} class="link" target="_blank">Download File</a>
-      </p>
-    {/if}
+<div class="fullscreen-container">
+  <img src="/logo.png" alt="Logo" class="logo" />
+  <h1>Upload Your File</h1>
+  
+  <label for="file-input">Choose File</label>
+  <input id="file-input" type="file" on:change="{(e) => (file = e.target.files[0])}" />
+  
+  {#if file}
+    <p class="selected-file">Selected File: {file.name}</p>
+  {/if}
+
+  <button on:click="{handleFileUpload}">Upload</button>
+
+  <div class="progress-bar">
+    <div class="progress" style="width: {$uploadProgress}%"></div>
   </div>
+
+  {#if $errorMessage}
+    <p class="error-message">{$errorMessage}</p>
+  {/if}
+
+  {#if $downloadLink}
+    <p class="success-message">File uploaded successfully!</p>
+    <a class="download-link" href="{$downloadLink}" target="_blank" rel="noopener noreferrer">Download File</a>
+  {/if}
 </div>
