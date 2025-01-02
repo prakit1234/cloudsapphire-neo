@@ -73,6 +73,11 @@ async function register() {
         text-align: center;
     }
 
+  .logo {
+    width: 100px; /* Adjust as needed */
+    margin-bottom: 20px;
+  }
+
     h1 {
         font-size: 28px;
         margin-bottom: 20px;
