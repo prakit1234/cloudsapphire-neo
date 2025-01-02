@@ -30,6 +30,7 @@ async function register() {
 
 <main>
     <div class="container">
+         <img src="/CloudSapphire-Neo.png" alt="Logo" class="logo" />
         <h1>Register</h1>
 
         <form on:submit|preventDefault={register}>
