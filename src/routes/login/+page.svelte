@@ -39,7 +39,7 @@ async function loginWithEmail() {
 
 <main>
   <div class="container">
-    <img src="/Cloudsapphire-Neo.png" alt="Logo" class="logo" />
+    <img src="/CloudSapphire-Neo.png" alt="Logo" class="logo" />
     <h1>Login</h1>
 
     <div class="google-login">
