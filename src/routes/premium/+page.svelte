@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { supabase } from '$lib/supabase';
-  import Cookies from 'js-cookie'; // Make sure to install js-cookie
+  import Cookies from 'js-cookie'; 
 
   let selectedFile = null;
   let downloadLink = '';
