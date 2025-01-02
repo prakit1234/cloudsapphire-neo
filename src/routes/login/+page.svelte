@@ -90,7 +90,7 @@ async function loginWithEmail() {
   }
 
   .logo {
-    width: 100px; /* Adjust as needed */
+    width: 100px; 
     margin-bottom: 20px;
   }
 
