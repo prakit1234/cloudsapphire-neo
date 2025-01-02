@@ -25,6 +25,9 @@
 	},
 	"dependencies": {
 		"@supabase/supabase-js": "^2.47.10",
-		"firebase": "^11.1.0"
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
+		"firebase": "^11.1.0",
+		"js-cookie": "^3.0.5"
 	}
 }

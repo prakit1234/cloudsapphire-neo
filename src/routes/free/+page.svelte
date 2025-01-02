@@ -50,6 +50,17 @@
       errorMessage.set('An unexpected error occurred.');
     }
   };
+
+  const copyToClipboard = async () => {
+    if (!downloadLink) return;
+    try {
+      await navigator.clipboard.writeText($downloadLink);
+      alert('Download link copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+      alert('Failed to copy link. Please try again.');
+    }
+  };
 </script>
 
 <style>
@@ -79,12 +90,12 @@
     border-radius: 12px;
   }
 
-   .logo {
-    width: 150px;
-    height: auto;
-    margin-bottom: 2rem;
+ .logo {
+    width: 120px;
+    margin: 20px auto;
+    display: block;
   }
-
+  
   h1 {
     font-size: 2rem;
     font-weight: 600;
@@ -175,9 +186,16 @@
     text-align: center;
   }
 
+  .link-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
   a.download-link {
     display: inline-block;
-    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
     text-decoration: none;
     background: linear-gradient(90deg, #2575fc, #6a11cb);
     color: #fff;
@@ -191,10 +209,21 @@
   a.download-link:hover {
     background: linear-gradient(90deg, #6a11cb, #2575fc);
   }
+
+  button.copy-link {
+    background: #444;
+    border: 1px solid #6a11cb;
+    margin-top: 0.5rem;
+  }
+
+  button.copy-link:hover {
+    background: #6a11cb;
+    color: #fff;
+  }
 </style>
 
 <div class="fullscreen-container">
-  <img src="/logo.png" alt="Logo" class="logo" />
+  <img src="/Cloudsapphire-Neo.png" alt="Logo" class="logo" />
   <h1>Upload Your File</h1>
   
   <label for="file-input">Choose File</label>
@@ -215,7 +244,10 @@
   {/if}
 
   {#if $downloadLink}
-    <p class="success-message">File uploaded successfully!</p>
-    <a class="download-link" href="{$downloadLink}" target="_blank" rel="noopener noreferrer">Download File</a>
+    <div class="link-container">
+      <p class="success-message">File uploaded successfully!</p>
+      <a class="download-link" href="{$downloadLink}" target="_blank" rel="noopener noreferrer">Download File</a>
+      <button class="copy-link" on:click="{copyToClipboard}">Copy Link</button>
+    </div>
   {/if}
 </div>

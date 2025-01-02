@@ -28,7 +28,7 @@
 
   const handlePremiumUpload = () => {
     if (userActivity.daysUsed >= 5) {
-      goto("/premium-upload"); // Redirect to the premium upload page
+      goto("/premium"); // Redirect to the premium upload page
     } else {
       alert(
         `Premium access is unlocked after 5 days of usage. You have used the app for ${userActivity.daysUsed} days.`
