@@ -278,12 +278,12 @@
   <section id="contact" class="contact">
     <h2>Contact Us</h2>
     <p>If you have any questions or need assistance, feel free to reach out to us!</p>
-    <p>Email: cloudsapphire.proton.me </p>
+    <p>Email: sapphirecloudsupport@gmail.com </p>
     <p>discord: xtro_kai</p>
     <p>Follow us on social media for updates:</p>
     <p>
-      <a href="https://twitter.com/teenagerofassam" target="_blank">Twitter</a> | 
-      <a href="https://facebook.com/notfound" target="_blank">Facebook</a> | 
+      <a href="https://youtube.com/@Edu_Pc" target="_blank">Youtube</a> | 
+      <a href="https://github.com/prakit1234" target="_blank">Github</a> | 
       <a href="https://instagram.com/zen_ka.1" target="_blank">Instagram</a>
     </p>
   </section>
